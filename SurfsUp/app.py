@@ -45,18 +45,18 @@ def welcome():
         f"/api/v1.0/precipitation<br/>"
         f"/api/v1.0/stations<br/>"
         f"/api/v1.0/tobs<br/>"
-        f"/api/v1.0/(user_input_start_date)<br/>"
-        f"/api/v1.0/(user_input_start_date)/(user_input_end_date)<br/>" 
+        f"/api/v1.0/<start>(user_input_start_date)<br/>"
+        f"/api/v1.0/<start>(user_input_start_date)/<end>(user_input_end_date)<br/>" 
         f" * Note - Dates must be entered in YYYY-mm-dd format" 
         f"Data available from 2010-01-01 through 2017-08-23"
     )
 
 @app.route("/api/v1.0/precipitation")
 def precip():
-    # Create our session (link) from Python to the DB
+    # Create our session (link) from Python
     session = Session(engine)
     # Find the most recent date in the data set.
-    last = session.query(Measurement).group_by(Measurement.date).order_by(desc(Measurement.date)).first()
+    last = session.query(Measurement.date).group_by(Measurement.date).order_by(desc(Measurement.date)).first()
     # Design a query to retrieve the last 12 months of precipitation data and plot the results. 
     # Starting from the most recent data point in the database. 
     end_date = last.date
@@ -84,7 +84,7 @@ def stations():
 def tobs():
     session = Session(engine)
 
-    last = session.query(Measurement).group_by(Measurement.date).order_by(desc(Measurement.date)).first()
+    last = session.query(Measurement.date).group_by(Measurement.date).order_by(desc(Measurement.date)).first()
     # Design a query to retrieve the last 12 months of precipitation data and plot the results. 
     # Starting from the most recent data point in the database. 
     end_date = last.date
