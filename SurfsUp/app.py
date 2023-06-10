@@ -83,10 +83,8 @@ def stations():
 @app.route("/api/v1.0/tobs")
 def tobs():
     session = Session(engine)
-
-    last = session.query(Measurement.date).group_by(Measurement.date).order_by(desc(Measurement.date)).first()
-    # Design a query to retrieve the last 12 months of precipitation data and plot the results. 
-    # Starting from the most recent data point in the database. 
+    # Determine most recent date in dataset
+    last = session.query(Measurement.date).group_by(Measurement.date).order_by(desc(Measurement.date)).first() 
     end_date = last.date
     # Calculate the date one year from the last date in data set.
     start_date = (dt.datetime.strptime(end_date, '%Y-%m-%d') - dt.timedelta(days=365)).strftime('%Y-%m-%d')
@@ -104,59 +102,64 @@ def tobs():
 
 @app.route("/api/v1.0/<start>")
 def temp(start):
-    session = Session(engine)
-    start_data = session.query(Measurement).filter(Measurement.date >= start)\
-             .with_entities(Measurement.tobs)
-    session.close()
-
+    #error code for dates outside of date range and/or misformatted dates
     if start < "2010-01-01" or start > "2017-08-23":
         return jsonify({"error": f"Date {start} out of range (2010-01-01 through 2017-08-23). Check date and format (YYYY-mm-dd)"}), 404
-    
-    else: 
+    #if no error present, run this:
+    else:
+        session = Session(engine)
+        #query measurement.tobs for all dates beginning with start date.
+        start_data = session.query(Measurement.tobs).filter(Measurement.date >= start)
+        session.close() 
+
+        #add all temp readings to list
         start_list = []
         for row in start_data:
             start_list.append(row.tobs)
-    
+        #find min/max/avg of items in list
         tmin = min(start_list)
         tmax = max(start_list)
         tavg = sum(start_list) / len(start_list)
+        #return as list
+        start_output = [tmin, tmax, tavg]
 
-        output_list = [tmin, tmax, tavg]
-
-        return jsonify(output_list)
+        return jsonify(start_output)
 
     
 
 
 @app.route("/api/v1.0/<start>/<end>")
 def range(start, end):
-    session = Session(engine)
-    range_data = session.query(Measurement).filter(Measurement.date >= start)\
-             .filter(Measurement.date <= end ).with_entities(Measurement.tobs)
-    session.close()
-
+    # error code if start date is out of range or misformatted
     if start < "2010-01-01" or start > "2017-08-23":
         return jsonify({"error": f"Date {start} out of range (2010-01-01 through 2017-08-23) Check date and format (YYYY-mm-dd)"}), 404
-    
+    # error code if end date is out of range or misformatted
     elif end < "2010-01-01" or end > "2017-08-23":
         return jsonify({"error": f"Date {end} out of range (2010-01-01 through 2017-08-23) Check date and format (YYYY-mm-dd)"}), 404
-
+    # error code if dates are out of order (end date first)
     elif start > end:
         return jsonify({"error": f"Start Date ({start}) and End Date ({end}) out of order"}), 404
 
-
+    # if no errors present, move forward with query
     else:
+        
+        session = Session(engine)
+        # query all temp info between start and end dates (inclusive)
+        range_data = session.query(Measurement.tobs).filter(Measurement.date >= start)\
+             .filter(Measurement.date <= end )
+        session.close()
+        # add temp data to list
         range_list = []
         for row in range_data:
             range_list.append(row.tobs)
-    
+        # find min/max/avg of items in list
         tmin = min(range_list)
         tmax = max(range_list)
         tavg = sum(range_list) / len(range_list)
+        # return as list
+        start_end_output = [tmin, tmax, tavg]
 
-        output_list = [tmin, tmax, tavg]
-
-        return jsonify(output_list)
+        return jsonify(start_end_output)
     
 
 
