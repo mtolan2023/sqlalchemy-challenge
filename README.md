@@ -26,4 +26,5 @@ This repo contains the "SurfsUp" project folder, where Jupyter Notebook, python 
 
 
 Citations:
+  Code used to find one year before date in Jupyter Notebook and app.py
 - https://stackoverflow.com/questions/55183235/get-the-one-year-before-date-for-a-given-date-in-python
