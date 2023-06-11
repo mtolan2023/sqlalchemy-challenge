@@ -47,7 +47,7 @@ def welcome():
         f"/api/v1.0/tobs<br/>"
         f"/api/v1.0/<start>(user_input_start_date)<br/>"
         f"/api/v1.0/<start>(user_input_start_date)/<end>(user_input_end_date)<br/>" 
-        f" * Note - Dates must be entered in YYYY-mm-dd format" 
+        f" * Note - Dates must be entered in YYYY-mm-dd format<br/>" 
         f"Data available from 2010-01-01 through 2017-08-23"
     )
 
