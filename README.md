@@ -1,5 +1,5 @@
 # sqlalchemy-challenge
-Module 10 Challenge
+Flask API/Python delivering data from Hawaiian weather stations
 
 This repo contains the "SurfsUp" project folder, where Jupyter Notebook, python app and Resources folder for the Module 10 challenge are found.
 
